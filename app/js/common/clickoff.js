@@ -1,7 +1,8 @@
 var ClickOff = {
 
 	clickoffid: '',
-	clickTargets:[],
+        clickTargets:[],
+        boundDocClick: null,
 
 	getClickTargets: function() {
 		return this.clickTargets;
@@ -84,18 +85,22 @@ var ClickOff = {
 		this.unbindDocClick();
 	},
 
-	bindDocClick: function() {
-		this.unbindDocClick();
+        bindDocClick: function() {
+                this.unbindDocClick();
 
-		var proxy = this.proxy = $.proxy( this, 'docClick' );
+                var that = this;
+                this.boundDocClick = function() {
+                        return that.docClick.apply(that, arguments);
+                };
 
-		$(document).on('click.' + this.clickoffid, proxy);
-	},
+                $(document).on('click.' + this.clickoffid, this.boundDocClick);
+        },
 
-	unbindDocClick: function() {
-		if (this.proxy) {
-			$(document).off('click.' + this.clickoffid, this.proxy);
-		}
-	}
+        unbindDocClick: function() {
+                if (this.boundDocClick) {
+                        $(document).off('click.' + this.clickoffid, this.boundDocClick);
+                        this.boundDocClick = null;
+                }
+        }
 
 };

@@ -256,12 +256,12 @@ var MapWindow = function(id, parent, data) {
 	}
 
 	function openLocation(location) {
-		var verses_html = $.map(location.verses, function(a) {
-			var bible_ref = new bible.Reference(a),
-				sectionid = bible_ref.bookid + bible_ref.chapter,
-				fragmentid = sectionid + '_' + bible_ref.verse1;
+                var verses_html = (location.verses || []).map(function(a) {
+                        var bible_ref = new bible.Reference(a),
+                                sectionid = bible_ref.bookid + bible_ref.chapter,
+                                fragmentid = sectionid + '_' + bible_ref.verse1;
 
-			return '<span class="verse" style="text-decoration:underline; cursor: pointer" data-sectionid="' + sectionid + '" data-fragmentid="' + fragmentid + '">' + bible_ref.toString() + '</span>';
+                        return '<span class="verse" style="text-decoration:underline; cursor: pointer" data-sectionid="' + sectionid + '" data-fragmentid="' + fragmentid + '">' + bible_ref.toString() + '</span>';
 		});
 
 		infowindow.setContent(
