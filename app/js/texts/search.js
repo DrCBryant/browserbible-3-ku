@@ -383,10 +383,34 @@ SearchTools = {
 
 	isLemmaRegExp: /[GgHh]\d{1,6}/g,
 
-	createSearchTerms: function (searchText, isLemmaSearch) {
-		var searchTermsRegExp = [];
+        uniqueStrings: function (items) {
+                if (!items || typeof items.length === 'undefined') {
+                        return [];
+                }
 
-		if (isLemmaSearch) {
+                if (typeof Set === 'function' && typeof Array.from === 'function') {
+                        return Array.from(new Set(items));
+                }
+
+                var seen = Object.create(null);
+                var uniqueItems = [];
+
+                for (var i = 0, il = items.length; i < il; i++) {
+                        var item = items[i];
+
+                        if (!seen[item]) {
+                                seen[item] = true;
+                                uniqueItems.push(item);
+                        }
+                }
+
+                return uniqueItems;
+        },
+
+        createSearchTerms: function (searchText, isLemmaSearch) {
+                var searchTermsRegExp = [];
+
+                if (isLemmaSearch) {
 
 			var strongNumbers = searchText.split(' ');
 
@@ -412,21 +436,21 @@ SearchTools = {
 
 			} else {
 
-				// ASCII characters have predictable word boundaries (space ' ' = \b)
-				SearchTools.isAsciiRegExp.lastIndex = 0;
+                                // ASCII characters have predictable word boundaries (space ' ' = \b)
+                                SearchTools.isAsciiRegExp.lastIndex = 0;
 
-				if (SearchTools.isAsciiRegExp.test( searchText )) {
+                                if (SearchTools.isAsciiRegExp.test( searchText )) {
 
-					// for non-quoted searches, use "AND" search
-					var andSearchParts = searchText.split(/\s+AND\s+|\s+/gi);
+                                        // for non-quoted searches, use "AND" search
+                                        var andSearchParts = searchText.split(/\s+AND\s+|\s+/gi);
 
-					// filter for duplicate words
-					andSearchParts = $.unique(andSearchParts);
+                                        // filter for duplicate words
+                                        andSearchParts = SearchTools.uniqueStrings(andSearchParts);
 
-					for (var i=0, il=andSearchParts.length; i<il; i++) {
+                                        for (var i=0, il=andSearchParts.length; i<il; i++) {
 
-						var part = andSearchParts[i],
-							partRegex = new XRegExp('\\b(' + part + ')\\b', 'gi');
+                                                var part = andSearchParts[i],
+                                                        partRegex = new XRegExp('\\b(' + part + ')\\b', 'gi');
 
 						searchTermsRegExp.push( partRegex );
 					}
@@ -509,10 +533,10 @@ SearchTools = {
 
 		addWord();
 
-		words = $.unique(words);
+                words = SearchTools.uniqueStrings(words);
 
-		return words;
-	},
+                return words;
+        },
 
 	HASHSIZE: 20,
 
@@ -781,16 +805,18 @@ SearchIndexLoader = function() {
 						if (searchDivisions.length == 0 || searchDivisions.indexOf(dbsBookCode) > -1) {
 
 							// see if we already created data for this section id
-							var sectionidInfo = $.grep(loadedResults, function(val){ return val.sectionid == sectionid; });
+                                                        var sectionidInfo = loadedResults.find(function(val) {
+                                                                return val.sectionid == sectionid;
+                                                        });
 
-							// create new data
-							if (sectionidInfo.length == 0) {
-								loadedResults.push({sectionid: sectionid, fragmentids: [fragmentid]});
-							}
-							// add to this sectionid
-							else {
-								sectionidInfo[0].fragmentids.push(fragmentid);
-							}
+                                                        // create new data
+                                                        if (!sectionidInfo) {
+                                                                loadedResults.push({sectionid: sectionid, fragmentids: [fragmentid]});
+                                                        }
+                                                        // add to this sectionid
+                                                        else {
+                                                                sectionidInfo.fragmentids.push(fragmentid);
+                                                        }
 						}
 					}
 				}
