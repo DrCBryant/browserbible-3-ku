@@ -174,7 +174,7 @@ var inliner = {
 					//content = content.replace(/\>[\n\t\s]+\</g,'');
 					content = content.replace(/\t+/g,' ');
 
-					base64 = new Buffer(content).toString('base64');
+                                        base64 = Buffer.from(content, 'utf8').toString('base64');
 				} else {
 					base64 = fs.readFileSync(filePath).toString('base64');
 				}
