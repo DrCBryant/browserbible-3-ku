@@ -2,6 +2,17 @@
 
 Bible software that runs in the browser. See `changelog.md` for recent updates.
 
+## Project structure
+
+BrowserBible keeps the application code and the source texts in different places:
+
+* `app/` – HTML, CSS, JavaScript, and other assets that make up the BrowserBible
+  interface. Modify files here when you are working on the UI or behaviour of the
+  app. Opening `app/index.html` in a browser will load these files directly.
+* `input/` – raw source files for Bible texts and other content. After editing or
+  adding files under this directory, run `npm run build:content` to regenerate the
+  processed output in `app/content/texts/` so the application can use it.
+
 ## Building Texts
 
 Before BrowserBible is ready for deployment, the texts that will be deployed with it must be built.  To build texts, first install the dependencies:
