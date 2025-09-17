@@ -13,7 +13,9 @@
     "build:index": "node tools/create_texts_index.js",
     "build:deafbibles": "node tools/generatedeafbibles.js",
     "build:content": "npm run build:texts && npm run build:deafbibles && npm run build:index",
-    "build": "node tools/builder.js"
+    "build": "node tools/builder.js",
+    "test:index": "node tools/test_index_html.js",
+    "test": "npm run build && npm run test:index"
   },
   "dependencies": {
     "base32": "0.0.6",
