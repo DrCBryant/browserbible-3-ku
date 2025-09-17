@@ -383,10 +383,26 @@ SearchTools = {
 
 	isLemmaRegExp: /[GgHh]\d{1,6}/g,
 
-	createSearchTerms: function (searchText, isLemmaSearch) {
-		var searchTermsRegExp = [];
+        uniqueStrings: function (items) {
+                var seen = Object.create(null);
+                var uniqueItems = [];
 
-		if (isLemmaSearch) {
+                for (var i = 0, il = items.length; i < il; i++) {
+                        var item = items[i];
+
+                        if (!seen[item]) {
+                                seen[item] = true;
+                                uniqueItems.push(item);
+                        }
+                }
+
+                return uniqueItems;
+        },
+
+        createSearchTerms: function (searchText, isLemmaSearch) {
+                var searchTermsRegExp = [];
+
+                if (isLemmaSearch) {
 
 			var strongNumbers = searchText.split(' ');
 
@@ -412,21 +428,21 @@ SearchTools = {
 
 			} else {
 
-				// ASCII characters have predictable word boundaries (space ' ' = \b)
-				SearchTools.isAsciiRegExp.lastIndex = 0;
+                                // ASCII characters have predictable word boundaries (space ' ' = \b)
+                                SearchTools.isAsciiRegExp.lastIndex = 0;
 
-				if (SearchTools.isAsciiRegExp.test( searchText )) {
+                                if (SearchTools.isAsciiRegExp.test( searchText )) {
 
-					// for non-quoted searches, use "AND" search
-					var andSearchParts = searchText.split(/\s+AND\s+|\s+/gi);
+                                        // for non-quoted searches, use "AND" search
+                                        var andSearchParts = searchText.split(/\s+AND\s+|\s+/gi);
 
-					// filter for duplicate words
-					andSearchParts = $.unique(andSearchParts);
+                                        // filter for duplicate words
+                                        andSearchParts = SearchTools.uniqueStrings(andSearchParts);
 
-					for (var i=0, il=andSearchParts.length; i<il; i++) {
+                                        for (var i=0, il=andSearchParts.length; i<il; i++) {
 
-						var part = andSearchParts[i],
-							partRegex = new XRegExp('\\b(' + part + ')\\b', 'gi');
+                                                var part = andSearchParts[i],
+                                                        partRegex = new XRegExp('\\b(' + part + ')\\b', 'gi');
 
 						searchTermsRegExp.push( partRegex );
 					}
@@ -509,10 +525,10 @@ SearchTools = {
 
 		addWord();
 
-		words = $.unique(words);
+                words = SearchTools.uniqueStrings(words);
 
-		return words;
-	},
+                return words;
+        },
 
 	HASHSIZE: 20,
 
