@@ -14,9 +14,9 @@ var
 
 // START
 var
-	rootPath = '../app/',
-	buildPath = path.join(rootPath, 'build'),
-	inputFilePath = path.join(rootPath, 'index.html'),
+rootPath = path.join(__dirname, '..', 'app'),
+buildPath = path.join(rootPath, 'build'),
+inputFilePath = path.join(rootPath, 'index.html'),
 	html = fs.readFileSync(inputFilePath, 'utf8'),
 
 	linkRegExp = /<link(.)+href="([^"]+)"(.)+\/>/gi,
@@ -205,7 +205,7 @@ minifiedCss = uglifycss.processString(combinedCss);
 
 
 // inlined
-combinedCss = inliner.inlineImages(combinedCss, '../app/css/');
+combinedCss = inliner.inlineImages(combinedCss, path.join(rootPath, 'css'));
 minifiedCss = uglifycss.processString(combinedCss);
 
 // write out
