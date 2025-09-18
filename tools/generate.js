@@ -9,14 +9,13 @@
 
 // MODULES
 var fs = require('fs'),
-	path = require('path'),
-	rmrf = require('rimraf').sync,
-	mkdirp = require('mkdirp').sync,
-	bibleData = require('./data/bible_data.js'),
-	bibleFormatter = require('./bible_formatter.js'),
-	verseIndexer = require('./verse_indexer.js'),
-	ProgressBar = require('progress'),
-	argv = require('minimist')(process.argv.slice(2));
+        path = require('path'),
+        mkdirp = require('mkdirp').sync,
+        bibleData = require('./data/bible_data.js'),
+        bibleFormatter = require('./bible_formatter.js'),
+        verseIndexer = require('./verse_indexer.js'),
+        ProgressBar = require('progress'),
+        argv = require('minimist')(process.argv.slice(2));
 
 
 // VARS
@@ -71,9 +70,29 @@ function updateProgress() {
 	progressBar.tick();
 }
 
+function removeDirectoryContents(folderPath) {
+        if (!fs.existsSync(folderPath)) {
+                return;
+        }
+
+        var entries = fs.readdirSync(folderPath);
+
+        entries.forEach(function(entry) {
+                var entryPath = path.join(folderPath, entry);
+                var entryStats = fs.lstatSync(entryPath);
+
+                if (entryStats.isDirectory()) {
+                        removeDirectoryContents(entryPath);
+                        fs.rmdirSync(entryPath);
+                } else {
+                        fs.unlinkSync(entryPath);
+                }
+        });
+}
+
 function cleanFolder(folderPath) {
-	mkdirp(folderPath);
-	rmrf(path.join(folderPath, '*'));
+        mkdirp(folderPath);
+        removeDirectoryContents(folderPath);
 }
 
 function convertFolder(inputPath) {
